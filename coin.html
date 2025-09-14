@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="keywords"
+      content="crypto, tracker, cryptocurrency, prices, market"
+    />
+    <meta
+      name="description"
+      content="A simple crypto tracker to monitor cryptocurrency prices and market trends."
+    />
+    <link rel="stylesheet" href="coin.css" />
+    <script
+      src="https://kit.fontawesome.com/2c86498118.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap"
+      rel="stylesheet"
+    />
+
+    <title>Crypto Tracker</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="left-nav">
+        <h2>CRYPTO TRACKER</h2>
+      </div>
+      <div class="right-nav">
+        <button><a href="/index.html">Home</a></button>
+        <button><a href="/favourite.html">Liked Coins</a></button>
+        <div class="search-container">
+          <input type="text" placeholder="Search..." /><i
+            class="fa-solid fa-magnifying-glass search-icon"
+          ></i>
+          <div class="dailog-box">
+            <div class="search-title">
+              <h3>Search Results</h3>
+              <i class="fa-solid fa-xmark" style="color: #000000"></i>
+            </div>
+            <div class="search-content">
+              <ul></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main>
+      <div id="coin-container">
+        <div id="sidebar">
+          <div id="sidebar-skeleton">
+            <div class="skeleton skeleton-circle"></div>
+            <div
+              class="skeleton skeleton-text"
+              style="height: 24px; width: 60%; margin: 12px auto"
+            ></div>
+            <div
+              class="skeleton skeleton-text"
+              style="height: 80px; width: 100%"
+            ></div>
+            <div style="margin-top: 16px">
+              <div
+                class="skeleton skeleton-text"
+                style="height: 20px; width: 100%; margin: 8px 0"
+              ></div>
+              <div
+                class="skeleton skeleton-text"
+                style="height: 20px; width: 100%; margin: 8px 0"
+              ></div>
+              <div
+                class="skeleton skeleton-text"
+                style="height: 20px; width: 100%; margin: 8px 0"
+              ></div>
+            </div>
+            <div
+              class="skeleton"
+              style="
+                height: 40px;
+                width: 60%;
+                margin: 24px auto 0;
+                border-radius: 8px;
+              "
+            ></div>
+          </div>
+          <img src="" alt="Coin Image" id="coin-image" />
+          <h3 id="coin-name" style="text-align: center"></h3>
+          <p id="coin-desc" style="text-align: justify"></p>
+          <div id="coin-data">
+            <div>
+              <span>Rank:</span>
+              <span id="coin-rank"></span>
+            </div>
+            <div>
+              <span>Current Price:</span>
+              <span id="coin-price"></span>
+            </div>
+            <div>
+              <span>Market Cap:</span>
+              <span id="coin-cap"></span>
+            </div>
+          </div>
+          <button id="add-fav-btn">Add to Favourites</button>
+        </div>
+        <div id="right-chart">
+          <div id="btn-container">
+            <button id="24h">24h</button>
+            <button id="30d">30d</button>
+            <button id="90d">90d</button>
+          </div>
+          <div id="chart-skeleton">
+            <div
+              class="skeleton"
+              style="height: 280px; width: 100%; border-radius: 12px"
+            ></div>
+          </div>
+          <canvas id="coinChart"></canvas>
+        </div>
+      </div>
+    </main>
+
+    <script src="coin.js"></script>
+  </body>
+</html>
