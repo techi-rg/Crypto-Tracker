@@ -13,7 +13,11 @@ async function favoriteCoins(page = 1) {
 
   if (favIds.length === 0) {
     favTable.innerHTML =
+      
       "<tr><td colspan='7'>No favourite coins added.</td></tr>";
+    
+    // document.getElementById("shimmer-loader").style.display = "none";
+    // document.getElementById("content").style.display = "block";
     return;
   }
 
@@ -81,3 +85,48 @@ document.querySelector(".next-btn").addEventListener("click", () => {
   currentPage++;
   favoriteCoins(currentPage);
 });
+
+
+const sortAscPrice = document.querySelector(".sort-asc-price");
+const sortDescPrice = document.querySelector(".sort-desc-price");
+const sortAscVolume = document.querySelector(".sort-asc-volume");
+const sortDescVolume = document.querySelector(".sort-desc-volume");
+const sortAscMarket = document.querySelector(".sort-asc-market");
+const sortDescMarket = document.querySelector(".sort-desc-market");
+
+
+const handleSortVolume = (order) => {
+  coins.sort((a, b) =>
+    order == "asc"
+      ? a.total_volume - b.total_volume
+      : b.total_volume - a.total_volume
+  );
+  favoriteCoins(coins);
+};
+
+const handleSortMarket = (order) => {
+  coins.sort((a, b) =>
+    order == "asc" ? a.market_cap - b.market_cap : b.market_cap - a.market_cap
+  );
+  favoriteCoins();
+};
+
+const handleSortPrice = (order) => {
+  coins.sort((a, b) =>
+    order == "asc"
+      ? a.current_price - b.current_price
+      : b.current_price - a.current_price
+  );
+  favoriteCoins();
+};
+
+sortAscPrice.addEventListener("click", () => handleSortPrice("asc"));
+
+sortDescPrice.addEventListener("click", () => handleSortPrice("desc"));
+sortAscVolume.addEventListener("click", () => handleSortVolume("asc"));
+
+sortDescVolume.addEventListener("click", () => handleSortVolume("desc"));
+
+sortAscMarket.addEventListener("click", () => handleSortMarket("asc"));
+
+sortDescMarket.addEventListener("click", () => handleSortMarket("desc"));
