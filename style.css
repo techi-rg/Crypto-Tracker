@@ -135,6 +135,10 @@ table tbody tr:hover {
     cursor: not-allowed;
 }
 
+.fa-arrow-down,.fa-arrow-up{
+ cursor:pointer
+ }
+
 #shimmer-loader {
   display: flex;
   flex-direction: column;
