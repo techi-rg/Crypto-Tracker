@@ -1,23 +1,28 @@
 let currentPage = 1;
-let itemsPerPage = 25;
+let itemsPerPage = 10;
 
 // 🔸 CHANGE: coins ko global variable banaya (taaki sorting functions me access ho sake)
 let coins = [];
 
 async function favoriteCoins(page = 1) {
   const favTable = document.getElementById("favTable");
+  const prevBtn = document.querySelector(".prev-btn"); // 🔸 CHANGE: select prev button
+  const nextBtn = document.querySelector(".next-btn"); // 🔸 CHANGE: select next button
   let favouriteList = JSON.parse(localStorage.getItem("favourites")) || [];
 
   // Show shimmer, hide content
   document.getElementById("shimmer-loader").style.display = "flex";
   document.getElementById("content").style.display = "none";
 
-  // Extract only IDs from favourite coins
   const favIds = favouriteList.map((c) => c.id);
 
   if (favIds.length === 0) {
     favTable.innerHTML =
       "<tr><td colspan='7'>No favourite coins added.</td></tr>";
+    prevBtn.style.display = "none";
+    nextBtn.style.display = "none"; // 🔸 CHANGE: Hide pagination buttons if no favourites
+    document.getElementById("shimmer-loader").style.display = "none";
+    document.getElementById("content").style.display = "block";
     return;
   }
 
@@ -28,13 +33,24 @@ async function favoriteCoins(page = 1) {
       )}&order=market_cap_desc&per_page=${itemsPerPage}&page=${page}`
     );
 
-    // 🔸 CHANGE: global coins me data store kiya
     coins = await res.json();
 
-    // 🔸 CHANGE: renderTable() function se table render kar rahe hain
     renderTable(coins, favTable, favouriteList);
 
-    // Hide shimmer, show content
+    // 🔸 CHANGE: Show/hide pagination buttons based on total items
+    if (favIds.length > itemsPerPage) {
+      prevBtn.style.display = "inline-block";
+      nextBtn.style.display = "inline-block";
+    } else {
+      prevBtn.style.display = "none";
+      nextBtn.style.display = "none";
+    }
+
+    // 🔸 CHANGE: Enable/Disable Prev and Next buttons based on current page
+    const totalPages = Math.ceil(favIds.length / itemsPerPage);
+    prevBtn.disabled = currentPage === 1; // first page → prev disabled
+    nextBtn.disabled = currentPage === totalPages; // last page → next disabled
+
     document.getElementById("shimmer-loader").style.display = "none";
     document.getElementById("content").style.display = "block";
   } catch (error) {
@@ -44,14 +60,19 @@ async function favoriteCoins(page = 1) {
   }
 }
 
-// 🔸 CHANGE: Table render karne ka code alag function me nikala
 function renderTable(coins, favTable, favouriteList) {
-  favTable.innerHTML = ""; // clear old rows
+  const prevBtn = document.querySelector(".prev-btn"); // 🔸 CHANGE: select buttons inside render for delete handling
+  const nextBtn = document.querySelector(".next-btn");
+  favTable.innerHTML = "";
 
   coins.forEach((coin, index) => {
     const row = document.createElement("tr");
+    row.classList.add("coin-row");
+    row.setAttribute("data-id", coin.id);
     row.innerHTML = `
-      <td>${index + 1}</td>
+      <td>${
+        (currentPage - 1) * itemsPerPage + index + 1
+      }</td> <!-- 🔸 CHANGE: continuous numbering -->
       <td><img src="${coin.image}" width="20"></td>
       <td>${coin.name} (${coin.symbol.toUpperCase()})</td>
       <td>$${coin.current_price.toLocaleString()}</td>
@@ -62,14 +83,21 @@ function renderTable(coins, favTable, favouriteList) {
       }"></i></td>
     `;
 
-    // Remove from favourites
+    // 🔸 CHANGE: Delete row → update pagination buttons after delete
     row.querySelector(".fa-trash").addEventListener("click", () => {
       favouriteList = favouriteList.filter((c) => c.id !== coin.id);
       localStorage.setItem("favourites", JSON.stringify(favouriteList));
       row.remove();
+
       if (favouriteList.length === 0) {
         favTable.innerHTML =
           "<tr><td colspan='7'>No favourite coins added.</td></tr>";
+        prevBtn.style.display = "none";
+        nextBtn.style.display = "none";
+      } else {
+        const totalPages = Math.ceil(favouriteList.length / itemsPerPage);
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
       }
     });
 
@@ -77,7 +105,7 @@ function renderTable(coins, favTable, favouriteList) {
   });
 }
 
-// jab page load hoga to first time call karo
+// Page load
 document.addEventListener("DOMContentLoaded", () => {
   favoriteCoins(currentPage);
 });
@@ -95,57 +123,12 @@ document.querySelector(".next-btn").addEventListener("click", () => {
   favoriteCoins(currentPage);
 });
 
-const sortAscPrice = document.querySelector(".sort-asc-price");
-const sortDescPrice = document.querySelector(".sort-desc-price");
-const sortAscVolume = document.querySelector(".sort-asc-volume");
-const sortDescVolume = document.querySelector(".sort-desc-volume");
-const sortAscMarket = document.querySelector(".sort-asc-market");
-const sortDescMarket = document.querySelector(".sort-desc-market");
+// Row click navigation
+document.addEventListener("click", (e) => {
+  const row = e.target.closest(".coin-row");
 
-// 🔸 CHANGE: Sorting functions ab sirf sort karte hain aur table ko re-render karte hain
-const handleSortPrice = (order) => {
-  coins.sort((a, b) =>
-    order === "asc"
-      ? a.current_price - b.current_price
-      : b.current_price - a.current_price
-  );
-  renderTable(
-    coins,
-    document.getElementById("favTable"),
-    JSON.parse(localStorage.getItem("favourites"))
-  );
-};
-
-const handleSortVolume = (order) => {
-  coins.sort((a, b) =>
-    order === "asc"
-      ? a.total_volume - b.total_volume
-      : b.total_volume - a.total_volume
-  );
-  renderTable(
-    coins,
-    document.getElementById("favTable"),
-    JSON.parse(localStorage.getItem("favourites"))
-  );
-};
-
-const handleSortMarket = (order) => {
-  coins.sort((a, b) =>
-    order === "asc" ? a.market_cap - b.market_cap : b.market_cap - a.market_cap
-  );
-  renderTable(
-    coins,
-    document.getElementById("favTable"),
-    JSON.parse(localStorage.getItem("favourites"))
-  );
-};
-
-// Sort button listeners
-sortAscPrice.addEventListener("click", () => handleSortPrice("asc"));
-sortDescPrice.addEventListener("click", () => handleSortPrice("desc"));
-
-sortAscVolume.addEventListener("click", () => handleSortVolume("asc"));
-sortDescVolume.addEventListener("click", () => handleSortVolume("desc"));
-
-sortAscMarket.addEventListener("click", () => handleSortMarket("asc"));
-sortDescMarket.addEventListener("click", () => handleSortMarket("desc"));
+  if (row && !e.target.classList.contains("fav-icon")) {
+    const coinId = row.getAttribute("data-id");
+    window.location.href = `coin.html?id=${coinId}`;
+  }
+});

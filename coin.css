@@ -3,6 +3,7 @@ body {
     padding: 0;
      font-family: 'Share Tech Mono', monospace;
     background-color: #f4f4f4;
+    cursor:pointer;
 }
 
 header {
@@ -197,5 +198,14 @@ header {
 
     #coin-container div {
         width: 100%;
+    }
+
+    .right-nav button {
+        padding: 0px 8px;
+        font-size: small;
+    }
+
+    table {
+        font-size: small;
     }
 }

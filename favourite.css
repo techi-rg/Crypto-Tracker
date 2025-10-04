@@ -3,6 +3,7 @@ body {
     padding: 0;
     font-family: 'Share Tech Mono', monospace;
     background-color: #f4f4f4;
+    cursor:pointer;
 }
 
 header {
@@ -107,9 +108,18 @@ table th {
     cursor: pointer;
 }
 
+.pagination button:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+
 .fa-arrow-down,.fa-arrow-up{
  cursor:pointer
  }
+ table tbody tr:hover {
+    background-color: rgb(246, 229, 229);
+}
 
 /* Shimmer box style */
 
@@ -150,4 +160,21 @@ table th {
   100% {
     left: 100%;
   }
+}
+
+
+@media(max-width:768px) {
+
+    .right-nav button {
+        padding: 0px 8px;
+        font-size: small;
+    }
+
+    table {
+        font-size: small;
+    }
+
+    .right-nav input {
+    width: 150px;
+    }
 }

@@ -11,6 +11,37 @@ document.addEventListener("DOMContentLoaded", async () => {
   const sidebarSkeleton = document.getElementById("sidebar-skeleton");
   const chartSkeleton = document.getElementById("chart-skeleton");
   const canvasEl = document.getElementById("coinChart");
+  const addFavBtn = document.getElementById("add-fav-btn");
+
+  // Function to check and update button state
+  function updateFavButtonState() {
+    let favourites = JSON.parse(localStorage.getItem("favourites")) || [];
+    const isFavourite = favourites.some((fav) => fav.id === coinId);
+    if (isFavourite) {
+      addFavBtn.textContent = "Remove from Favourites";
+    } else {
+      addFavBtn.textContent = "Add to Favourites";
+    }
+  }
+
+  // Add click event listener to the button
+  addFavBtn.addEventListener("click", () => {
+    let favourites = JSON.parse(localStorage.getItem("favourites")) || [];
+    const isFavourite = favourites.some((fav) => fav.id === coinId);
+
+    if (isFavourite) {
+      // Agar pehle se favourite hai, to remove karo
+      favourites = favourites.filter((fav) => fav.id !== coinId);
+      addFavBtn.textContent = "Add to Favourites";
+    } else {
+      // Agar favourite nahi hai, to add karo
+      favourites.push({ id: coinId });
+      addFavBtn.textContent = "Remove from Favourites";
+    }
+
+    // Updated list ko localStorage me save karo
+    localStorage.setItem("favourites", JSON.stringify(favourites));
+  });
 
   function toggleSidebarSkeleton(isLoading) {
     sidebarSkeleton.style.display = isLoading ? "block" : "none";
@@ -52,7 +83,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       : "No description available.";
     coinPrice.textContent = `$${data.market_data.current_price.usd.toLocaleString()}`;
     coinRank.textContent = `${data.market_cap_rank}`;
-    coinCap.textContent = `$${data.market_data.market_cap.usd.toLocaleString()}`;
+    coinCap.textContent = `$${ data.market_data.market_cap.usd.toLocaleString() }`;
+    updateFavButtonState();
   }
 
   let coinData = await fetchCoinData();
